@@ -9,22 +9,25 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// 数据库相关配置
 type Config struct {
 	Hosts []string
 	// AuthSource Specify the database name associated with the user’s credentials.
 	// authSource defaults to the database specified in the connection string.
-	AuthSource string
-	UserName   string
-	Password   string
-	Database   string
-	Timeout    time.Duration // second
+	AuthSource string // 使用哪个数据库进行认证
+	UserName   string // 用户名
+	Password   string // 密码
+	Database   string // 数据库名
+	Timeout    time.Duration // 超时时间，单位：秒
 }
 
+// 数据库
 type Mdb struct {
 	*Config
-	*mgo.Session
+	*mgo.Session // mongo 连接 session
 }
 
+// 数据库构造函数
 func NewMdb(c *Config) (*Mdb, error) {
 	m := &Mdb{
 		Config: c,
@@ -32,6 +35,7 @@ func NewMdb(c *Config) (*Mdb, error) {
 	return m, m.connect()
 }
 
+// 连接数据库
 func (m *Mdb) connect() error {
 	// connectionString: [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
 	// via: https://docs.mongodb.com/manual/reference/connection-string/

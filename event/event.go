@@ -14,9 +14,14 @@ const (
 )
 
 var (
+	// key 为事件名
+	// value 为处理函数数组，签名为 func(interface{})
 	Events = make(map[string][]func(interface{}), 2)
 )
 
+// 注册事件
+// param: name 为事件名
+// param: fs 为处理函数数组，签名为 func(interface{})
 func On(name string, fs ...func(interface{})) error {
 	evs, ok := Events[name]
 	if !ok {
@@ -40,6 +45,9 @@ func On(name string, fs ...func(interface{})) error {
 	return nil
 }
 
+// 触发事件
+// param: name 事件名
+// param: arg 参数
 func Emit(name string, arg interface{}) {
 	evs, ok := Events[name]
 	if !ok {
@@ -51,6 +59,7 @@ func Emit(name string, arg interface{}) {
 	}
 }
 
+// 触发所有事件
 func EmitAll(arg interface{}) {
 	for _, fs := range Events {
 		for _, f := range fs {
@@ -60,6 +69,9 @@ func EmitAll(arg interface{}) {
 	return
 }
 
+// 取消注册事件
+// param: name 事件名
+// param: f 处理函数
 func Off(name string, f func(interface{})) error {
 	evs, ok := Events[name]
 	if !ok || len(evs) == 0 {
@@ -78,6 +90,7 @@ func Off(name string, f func(interface{})) error {
 	return fmt.Errorf("%v func dones't exist in event[%s]", fp, name)
 }
 
+// 取消注册所有事件
 func OffAll(name string) error {
 	Events[name] = nil
 	return nil

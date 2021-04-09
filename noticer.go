@@ -15,17 +15,20 @@ import (
 	"github.com/shunfei/cronsun/log"
 )
 
+// 通知发送者
 type Noticer interface {
 	Serve()
 	Send(*Message)
 }
 
+// 消息
 type Message struct {
-	Subject string
-	Body    string
-	To      []string
+	Subject string // 主题
+	Body    string // 内容
+	To      []string // 收件人
 }
 
+// 邮件服务
 type Mail struct {
 	cf      *conf.MailConf
 	open    bool
@@ -34,6 +37,7 @@ type Mail struct {
 	msgChan chan *Message
 }
 
+// 邮件服务构造函数
 func NewMail(timeout time.Duration) (m *Mail, err error) {
 	var (
 		sc   gomail.SendCloser
@@ -48,8 +52,8 @@ func NewMail(timeout time.Duration) (m *Mail, err error) {
 	}()
 
 	select {
-	case <-done:
-	case <-time.After(timeout):
+	case <-done: // 完毕
+	case <-time.After(timeout): // 超时
 		err = fmt.Errorf("connect to smtp timeout")
 	}
 
@@ -67,6 +71,7 @@ func NewMail(timeout time.Duration) (m *Mail, err error) {
 	return
 }
 
+// 运行服务
 func (m *Mail) Serve() {
 	var err error
 	sm := gomail.NewMessage()
@@ -102,6 +107,7 @@ func (m *Mail) Serve() {
 	}
 }
 
+// 发送消息到对应的 channel
 func (m *Mail) Send(msg *Message) {
 	m.msgChan <- msg
 }

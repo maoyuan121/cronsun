@@ -15,6 +15,7 @@ var (
 	DefalutClient *Client
 )
 
+// 主要是封装 etcd
 type Client struct {
 	*client.Client
 

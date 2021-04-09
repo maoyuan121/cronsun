@@ -89,5 +89,6 @@ func extendFileContent(dir string, content []byte) (data []byte, err error) {
 		}
 		return sb
 	})
+
 	return
 }
